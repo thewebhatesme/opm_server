@@ -1,0 +1,39 @@
+# These parameters can be imported into other config files
+# by enclosing the key with % (like %database_user%)
+# Comments start with '#', as in php.ini
+parameters:
+    # General config
+        locale            : ${config.locale}
+        secret            : ${config.secret}
+        http_port: ${config.router.http_port}
+        https_port: ${config.router.https_port}
+
+# #############################################################
+# Default DATABASE CONNECTION PARAMETERS
+# #############################################################
+        default_database_driver     : ${config.database.default.driver}
+        default_database_host       : ${config.database.default.host}
+        default_database_port       : ${config.database.default.port}
+        default_database_name       : ${config.database.default.name}
+        default_database_test_name  : ${config.database.test.default.name}
+        default_database_user       : ${config.database.default.user}
+        default_database_password   : ${config.database.default.password}
+
+        mailer_transport  : ${config.mailer.transport}
+        mailer_host       : ${config.mailer.host}
+        mailer_user       : ${config.mailer.user}
+        mailer_password   : ${config.mailer.password}
+
+    # Host Suffix such as .integration.opm-server.org - set to ':8080' when working on dev
+        host_name: ${config.host.name}
+        base_url: ${config.base.url}
+
+    # cookie related stuff
+        cookie_prefix : ${config.cookie_prefix}
+        cookie_name : ${config.cookie_prefix}_opm
+        remember_me_cookie_lifetime : ${config.remember_me_cookie_lifetime}
+
+        build.revision : ${build.revision}
+
+        config_path_logs : ${config.path.logs}
+        config_path_cache : ${config.path.cache}

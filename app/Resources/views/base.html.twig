@@ -1,13 +1,57 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="UTF-8" />
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        {% block stylesheets %}{% endblock %}
-        <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
-    </head>
-    <body>
-        {% block body %}{% endblock %}
-        {% block javascripts %}{% endblock %}
-    </body>
+<head>
+    <meta charset="UTF-8" />
+    <title>{% block title %}OPM Server{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% block stylesheets %}
+        {% stylesheets '@PhmOpmServerBundle/Resources/public/less/main.less' filter='less,?yui_css' output='css/presentation.css'%}
+        <link rel="stylesheet" href="{{ asset_url }}" />
+        {% endstylesheets %}
+    {% endblock %}
+    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
+</head>
+<body>
+<div class="container">
+    {% block header %}
+        <h3 class="muted">OPM Server</h3>
+        {% block navbar %}
+            <div class="navbar">
+                {% block navbarinner %}
+                    <ul class="nav nav-pills nav-justified">
+                        {% block navbaritems %}
+                            <li {% if app.request.attributes.get('_route') == 'opm_home'%}class="active"{% endif %}>
+                                <a href="{{ url('opm_home') }}">{% trans %}OPM Home{% endtrans %}</a>
+                            </li>
+                            {% if is_granted('GROUP_ADMINISTRATORS') %}
+                                <li {% if app.request.attributes.get('_route') == 'logout'%}class="active"{% endif %}>
+                                    <a id ="nav_li_href_logout" href="{{ url('logout') }}">{% trans %}Logout{%endtrans%}</a>
+                                </li>
+                            {% else %}
+                                <li {% if app.request.attributes.get('_route') == 'opm_login'%}class="active"{% endif %}>
+                                    <a id="nav_li_href_login" href="{{ url('opm_login') }}">{% trans %}Login{% endtrans%}</a>
+                                </li>
+                            {% endif %}
+                        {% endblock %}
+                    </ul>
+                {% endblock %}
+            </div><!-- /.navbar -->
+        {% endblock %}
+    {% endblock %}
+    {% block body %}{% endblock %}
+    <br />
+    {% block footer %}
+        <div class="footer">
+            <p>&copy; Php Hates Me 2014</p>
+        </div>
+    {% endblock %}
+</div> <!-- /container -->
+{% block javascripts %}
+    {% javascripts
+    '%kernel.root_dir%/../vendor/jquery/jquery/jquery-1.10.2.js'
+    '%kernel.root_dir%/../vendor/twitter/bootstrap/js/*' filter='?yui_js' output='js/compiled/bootstrap.js'%}
+    <script src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+{% endblock %}
+</body>
 </html>

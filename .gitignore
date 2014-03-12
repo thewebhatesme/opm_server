@@ -4,3 +4,13 @@
 /app/logs/*
 /vendor/
 /app/config/parameters.yml
+.idea
+*.swp
+.Trash-1000
+.buildpath
+.idea
+.project
+.settings
+.DS_Store
+._.DS_Store
+app/AppKernel.php

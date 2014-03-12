@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="opm-server" default="build">
+
+    <!-- Fail if current user is root -->
+    <if>
+        <equals arg1="${env.USER}" arg2="root" />
+        <then>
+            <echo level="error" message="You are root!" />
+            <fail unless="enable.root" message="No builds as root!"/>
+        </then>
+    </if>
+
+    <!-- Fail if no.build property is set -->
+    <fail if="disable.build" message="Building forbidden on this system" />
+
+    <!-- Default environment this build file is executed for. This steers the property files to be included. -->
+    <property name="environment" value="dev" />
+
+    <!-- Absolute path to the project workspace root directory -->
+    <property name="path.base" value="${project.basedir}" />
+
+    <!-- include properties from user's home directory -->
+    <property file="${user.home}/build.properties" override="true" />
+    <!-- include general property file, containing default property definitions for all environments -->
+    <property file="${path.base}/build/properties/general.properties" override="true" />
+    <!-- include environment specific property file -->
+    <property file="${path.base}/build/properties/${environment}/default.properties" override="true" />
+
+    <!-- include general config file -->
+    <property file="${path.base}/build/config/default.ini" override="true" />
+    <!-- include environment specific config file -->
+    <property file="${path.base}/build/config/${environment}.ini" override="true" />
+
+    <!-- main targets -->
+    <!-- fixtures.default is now called by InstallBlueprintAssignments to ensure the affected databases always align -->
+    <echo level="info" message="Subtargets are not to be executed directly. Main targets are. You can create subtargets if you don't use
+        description argument in the target tag" />
+    <target
+            name="build"
+            depends="_info,
+                    unloadXdebug,
+                    configure,
+                    copyAppKernelTemplateWithReplacingPlaceholders,
+                    configureApplication,
+                    copyConfigFilesWithReplacingPlaceholders,
+                    patchVendors,
+                    assetic-dump,
+                    assets-install,
+                    unittest,
+                    cache-clear"
+            description="Cleans the workspace, update sources and builds the whole application including unittests."
+            />
+    <target
+            name="rebuild"
+            depends="_info,
+                    unloadXdebug,
+                    configure,
+                    copyAppKernelTemplateWithReplacingPlaceholders,
+                    configureApplication,
+                    copyConfigFilesWithReplacingPlaceholders,
+                    assetic-dump,
+                    assets-install,
+                    cache-clear"
+            description="Cleans the workspace, update sources and builds the whole application including unittests."
+            />
+    <!-- End of main targets -->
+
+    <target name="patchVendors" description="Install patches to vendor sources not merged yet" hidden="true" unless="disable.vendors">
+        <echo message="Applying patches." />
+
+        <foreach param="filename" absparam="absfilename" target="_patchVendors">
+            <fileset dir="${path.base}/build/patches/">
+                <depth max="0" min="0" />
+                <include name="*.diff"/>
+            </fileset>
+        </foreach>
+    </target>
+
+    <!-- Not used for now -->
+    <target name="_patchVendors" description="Install patches to vendor sources not merged yet" hidden="true">
+        <echo message="Applying patch ${filename}" />
+        <if>
+            <available property="file" file="${absfilename}.orig" />
+            <then>
+                <echo message="Patch already applied" />
+            </then>
+            <else>
+                <patch patchfile="${absfilename}" strip="1" backups="false"
+                       ignorewhitespace="true" haltonfailure="true" />
+                <touch file="${absfilename}.orig" />
+            </else>
+        </if>
+
+    </target>
+
+
+    <!-- Info -->
+    <target name="_info" hidden="true">
+        <echo level="warning" message="Building project tradimo in ${environment} environment." />
+        <echo message="" />
+
+        <if>
+            <isset property="enable.content.overwrite" />
+            <then>
+                <echo level="error" message="This build is not content save!" />
+            </then>
+            <else>
+                <echo level="warning" message="This build is contentent save" />
+                <echo message="Set the property 'enable.content.overwrite' to overwrite existing content." />
+            </else>
+        </if>
+    </target>
+
+    <!-- configure stuff -->
+    <target name="configure" hidden="true" description="Main target for all config relevant other targets.">
+        <delete dir="${path.base}/app/cache" quiet="true" includeemptydirs="true" />
+        <mkdir dir="${path.base}/app/cache" />
+        <mkdir dir="${config.path.logs}" />
+
+        <if>
+            <not>
+                <available file="${path.base}/bin" type="dir" />
+            </not>
+            <then>
+                <echo message="Creating bin dir on project root."/>
+                <mkdir dir="${path.base}/bin" />
+            </then>
+        </if>
+
+        <if>
+            <not>
+                <available file="${path.base}/web/css" type="dir" />
+            </not>
+            <then>
+                <echo message="Creating web/css"/>
+                <mkdir dir="${path.base}/web/css" />
+            </then>
+        </if>
+
+        <if>
+            <not>
+                <available file="${path.base}/web/js" type="dir" />
+            </not>
+            <then>
+                <echo message="Creating web/js"/>
+                <mkdir dir="${path.base}/web/js" />
+            </then>
+        </if>
+    </target>
+
+    <!-- Test stuff -->
+    <target name="unittest" description="Starts a PHPUnit test run for all application test cases">
+        <!--<exec command="php -dzend.enable_gc=0 /usr/bin/phpunit -c ${path.phpunit.config}" checkreturn="true" passthru="true" />-->
+    </target>
+
+    <!-- Test stuff -->
+    <target name="behattest" description="Executes the behat tests">
+        <echo message="SKIPPING BEHAT TEST FOR NOW. It breaks the build"/>
+        <!-- <exec command="./vendor/behat/behat/bin/behat -p=cv" checkreturn="true" passthru="true" />-->
+</target>
+
+<!-- this whole xdebug thing is to disable and enalbe xdebug while running functional tests as it is much faster then-->
+    <!-- Load and unload xdebug on dev -->
+    <target name="toggleXdebug" description="Toggles the load of xdebug for php cli only.">
+        <php function="extension_loaded" returnProperty="xdebug_enabled">
+            <param value="xdebug"/>
+        </php>
+        <echo message="The current load state of xdebug is: ${xdebug_enabled}"/>
+        <if>
+            <equals arg1="${environment}" arg2="dev" />
+            <then>
+                <if>
+                    <equals arg1="${xdebug_enabled}" arg2="true" />
+                    <then>
+                        <echo message="Trying to disable xdebug"/>
+                        <phingcall description="Call unload xdebug" target="unloadXdebug" />
+                    </then>
+                    <else>
+                        <echo message="Trying to enable xdebug"/>
+                        <phingcall description="Call load xdebug" target="loadXdebug" />
+                    </else>
+                </if>
+            </then>
+            <else>
+                <echo message="Not allowed to toggle xdebug in this environment."/>
+            </else>
+        </if>
+    </target>
+
+    <target name="unloadXdebug" description="Unloads xdebug" hidden="true">
+        <if>
+            <equals arg1="${environment}" arg2="dev" />
+            <then>
+                <exec command="sudo /opt/tools/bin/phpdismod xdebug"
+                      description="Disable xdebug module"
+                      checkreturn="true"
+                      passthru="true" />
+            </then>
+            <else>
+                <echo message="Skipping xdebug-toggling as not in dev environment"/>
+            </else>
+        </if>
+    </target>
+
+    <target name="loadXdebug" description="Loads xdebug" hidden="true">
+        <if>
+            <equals arg1="${environment}" arg2="dev" />
+            <then>
+                <exec command="sudo /opt/tools/bin/phpenmod xdebug"
+                      description="Enable xdebug module"
+                      checkreturn="true"
+                      passthru="true" />
+            </then>
+            <else>
+                <echo message="Skipping xdebug-toggling as not in dev environment"/>
+            </else>
+        </if>
+    </target>
+    <!-- end of xdebug enable/disable thing-->
+
+    <target name="configureApplication" description="Configures the drupal application">
+        <echo message="Configure OPM Server"/>
+        <if>
+            <isset property="enable.content.overwrite" />
+            <then>
+                <property name="yes-overwrite" value="-y" />
+            </then>
+            <else>
+                <property name="yes-overwrite" value="" />
+            </else>
+        </if>
+
+    </target>
+
+    <target name="copyAppKernelTemplateWithReplacingPlaceholders"
+            description="Copy KernelTemplates from app/*KernelTemplate.php to app/*Kernel.php">
+
+        <echo message="Copy AppKernelTemplate from app/AppKernelTemplate.php to app/AppKernel.php" />
+        <copy
+                file="${path.base}/app/AppKernelTemplate.php"
+                tofile="${path.base}/app/AppKernel.php"
+                overwrite="true"
+                >
+            <filterchain>
+                <expandproperties />
+            </filterchain>
+        </copy>
+    </target>
+
+    <target name="copyConfigFilesWithReplacingPlaceholders" description="Copy configfiles from build/config to config">
+        <if>
+            <not>
+                <available file="${path.base}/config" type="dir" />
+            </not>
+            <then>
+                <mkdir dir="${path.base}/config" />
+            </then>
+        </if>
+
+        <echo message="Copy ${path.base}/build/config/behat.yml to ${path.base}/config/behat.yml" />
+        <copy
+                file="${path.base}/build/config/behat.yml"
+                tofile="${path.base}/config/behat.yml"
+                overwrite="true"
+                >
+            <filterchain>
+                <expandproperties />
+            </filterchain>
+        </copy>
+        <echo message="Copy ${path.base}/build/config/parameters.yml to ${path.base}/app/config/parameters.yml" />
+        <copy
+                file="${path.base}/build/config/parameters.yml"
+                tofile="${path.base}/app/config/parameters.yml"
+                overwrite="true"
+                >
+            <filterchain>
+                <expandproperties />
+            </filterchain>
+        </copy>
+    </target>
+
+
+    <target name="info" description="Shows a info message " hidden="true">
+        <echo>
+            Targets:
+            build           Cleans the workspace, update sources and builds the whole application including default fixtures.
+            unittest        Starts a PHPUnit test run for all application test cases
+
+            Properties:
+            -Denvironment=XXX                Set environment like dev, integration, live
+            -Denable.content.overwrite       When building in a content save environment, force installation of fixtures
+
+        </echo>
+        <input propertyName="call.target" defaultValue="rebuild">Call target:</input>
+
+        <if>
+            <equals arg1="${call.target}" arg2="exit" />
+            <then>
+                <fail />
+            </then>
+            <else>
+                <phingcall target="${call.target}" />
+            </else>
+        </if>
+    </target>
+
+    <target name="cache-clear">
+        <echo message="Clearing OPM cache.." />
+        <exec command="app/console cache:clear --no-warmup" />
+        <echo message="Clearing OPM cache.." />
+    </target>
+
+    <target name="assetic-dump">
+        <echo message="Dumping the assetic prepared css and js" />
+        <exec command="app/console assetic:dump" />
+    </target>
+
+    <target name="assets-install">
+        <echo message="Installing the assets from the bundles in web with symlinks. (Better for development)" />
+        <exec command="app/console assets:install" />
+    </target>
+</project>
