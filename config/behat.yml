@@ -1,0 +1,26 @@
+default:
+  formatter:
+      name: pretty
+      parameters:
+        output_styles:
+          comment: [ black, white ]
+  extensions:
+      Behat\Symfony2Extension\Extension:
+          mink_driver: true
+          kernel:
+              env: test
+              debug: true
+      Behat\MinkExtension\Extension:
+          default_session: 'symfony2'
+          goutte:
+             guzzle_parameters:
+                curl.options:
+                    CURLOPT_SSL_VERIFYPEER: false
+                    CURLOPT_SSL_VERIFYHOST: false
+                ssl.certificate_authority: false
+          base_url: http://server.opm.local/app_test.php/
+          files_path: /Users/mikelohmann/Sites/opm_server
+opm-server:
+  extensions:
+        Behat\Symfony2Extension\Extension:
+            bundle: 'PhmOpmServerBundle'

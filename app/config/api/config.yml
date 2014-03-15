@@ -1,0 +1,18 @@
+imports:
+    - { resource: ../parameters.yml }
+    - { resource: ../config.yml }
+    - { resource: ../security.yml }
+    - { resource: fos_rest.yml }
+
+framework:
+    router:
+        resource: "%kernel.root_dir%/config/api/routing.yml"
+    form: false
+    csrf_protection: false
+
+    profiler:
+      enabled: false
+
+sensio_framework_extra:
+    request: { converters: true }
+    view:    { annotations: false }

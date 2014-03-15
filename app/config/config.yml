@@ -38,7 +38,7 @@ twig:
 assetic:
     debug:          "%kernel.debug%"
     use_controller: false
-    bundles:        []
+    bundles:        [PhmOpmServerBundle]
     #java: /usr/bin/java
     filters:
         less:
@@ -54,12 +54,12 @@ assetic:
 # Doctrine Configuration
 doctrine:
     dbal:
-        driver:   "%database_driver%"
-        host:     "%database_host%"
-        port:     "%database_port%"
-        dbname:   "%database_name%"
-        user:     "%database_user%"
-        password: "%database_password%"
+        driver:   "%default_database_driver%"
+        host:     "%default_database_host%"
+        port:     "%default_database_port%"
+        dbname:   "%default_database_name%"
+        user:     "%default_database_user%"
+        password: "%default_database_password%"
         charset:  UTF8
         # if using pdo_sqlite as your database driver, add the path in parameters.yml
         # e.g. database_path: "%kernel.root_dir%/data/data.db3"

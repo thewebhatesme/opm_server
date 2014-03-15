@@ -39,11 +39,11 @@
     <target
             name="build"
             depends="_info,
-                    unloadXdebug,
                     configure,
                     copyAppKernelTemplateWithReplacingPlaceholders,
                     configureApplication,
                     copyConfigFilesWithReplacingPlaceholders,
+                    installVendors,
                     patchVendors,
                     assetic-dump,
                     assets-install,
@@ -54,11 +54,11 @@
     <target
             name="rebuild"
             depends="_info,
-                    unloadXdebug,
                     configure,
                     copyAppKernelTemplateWithReplacingPlaceholders,
                     configureApplication,
                     copyConfigFilesWithReplacingPlaceholders,
+                    installVendors,
                     assetic-dump,
                     assets-install,
                     cache-clear"
@@ -147,6 +147,42 @@
                 <mkdir dir="${path.base}/web/js" />
             </then>
         </if>
+    </target>
+
+    <target name="installVendors" description="Installs the vendors directory based on composer.json" hidden="false"
+            unless="disable.vendors">
+        <echo message="Install vendors"/>
+        <if>
+            <not>
+                <available file="${path.base}/composer.lock" />
+            </not>
+            <then>
+                <exec command="${path.base}/composer.phar install --prefer-dist --verbose --optimize-autoloader"
+                      checkreturn="true" passthru="true"/>
+            </then>
+            <else>
+                <warn message="vendors are ALLREADY installed. updateVendors is now executed" />
+                <phingcall target="updateVendors">
+                </phingcall>
+            </else>
+        </if>
+
+    </target>
+
+    <target name="updateVendors" description="Updates the vendors directory based on composer.json" hidden
+            ="false" unless="disable.vendors">
+        <echo message="Update vendors"/>
+        <if>
+            <available file="${path.base}/composer.lock" />
+            <then>
+                <exec command="${path.base}/composer.phar update --prefer-dist --verbose" checkreturn="true"
+                      passthru="true"/>
+            </then>
+            <else>
+                <warn message="vendors are NOT installed. Please use installVendors or composer.phar install" />
+            </else>
+        </if>
+
     </target>
 
     <!-- Test stuff -->
@@ -246,6 +282,16 @@
                 <expandproperties />
             </filterchain>
         </copy>
+        <echo message="Copy AppKernelApiTemplate from app/AppKernelApiTemplate.php to app/AppKernelApi.php" />
+        <copy
+                file="${path.base}/app/AppKernelApiTemplate.php"
+                tofile="${path.base}/app/AppKernelApi.php"
+                overwrite="true"
+                >
+            <filterchain>
+                <expandproperties />
+            </filterchain>
+        </copy>
     </target>
 
     <target name="copyConfigFilesWithReplacingPlaceholders" description="Copy configfiles from build/config to config">
@@ -284,7 +330,8 @@
     <target name="info" description="Shows a info message " hidden="true">
         <echo>
             Targets:
-            build           Cleans the workspace, update sources and builds the whole application including default fixtures.
+            build           Cleans the workspace and builds the whole application including default fixtures.
+            rebuild         Just rebuilds the whole app
             unittest        Starts a PHPUnit test run for all application test cases
 
             Properties:

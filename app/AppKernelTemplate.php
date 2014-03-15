@@ -15,8 +15,7 @@ class AppKernel extends Kernel
             new Symfony\Bundle\SwiftmailerBundle\SwiftmailerBundle(),
             new Symfony\Bundle\AsseticBundle\AsseticBundle(),
             new Doctrine\Bundle\DoctrineBundle\DoctrineBundle(),
-            new Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),
-            new FOS\RestBundle\FOSRestBundle()
+            new Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle()
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {
@@ -33,5 +32,11 @@ class AppKernel extends Kernel
         $loader->load(__DIR__.'/config/config_'.$this->getEnvironment().'.yml');
     }
 
-
+    /**
+     * {@inheritDoc}
+     */
+    public function getLogDir()
+    {
+        return '${config.path.logs}';
+    }
 }

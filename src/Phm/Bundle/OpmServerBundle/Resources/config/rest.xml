@@ -1,0 +1,21 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <parameters>
+        <parameter key="phm.opmserver.controller.clientapi.class">Php\Bundle\OpmServerBundle\Controller\ClientApiController</parameter>
+    </parameters>
+
+    <services>
+        <service id="phm.opmserver.controller.clientapi"
+                 class="%phm.opmserver.controller.clientapi.class%">
+            <argument type="service" id="doctrine.orm.default_entity_manager"/>
+            <call method="setContainer">
+                <argument type="service" id="service_container"/>
+            </call>
+        </service>
+
+     </services>
+</container>

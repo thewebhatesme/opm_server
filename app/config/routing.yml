@@ -1,0 +1,4 @@
+phm_opm_server:
+    resource: "@PhmOpmServerBundle/Controller"
+    type:     annotation
+

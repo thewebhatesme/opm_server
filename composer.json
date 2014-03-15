@@ -21,30 +21,40 @@
         "incenteev/composer-parameter-handler": "~2.0",
 
         "twitter/bootstrap": "3.0.*",
-        "jquery/jquery":     "1.10.*",
+        "jquery/jquery":     "1.11.*",
         "friendsofsymfony/rest-bundle": "1.3.*"
     },
     "require-dev": {
         "mockery/mockery": "*@dev",
         "behat/symfony2-extension": "*",
-        "behat/mink": "2.0.*",
+        "behat/mink": "1.5.x",
         "behat/mink-goutte-driver": "*",
         "behat/mink-selenium2-driver": "*",
         "behat/behat": "2.5.*",
         "behat/mink-extension": "*",
-        "sqmk/phpunit-extensions": "dev-master",
-        "phing/phing" : "*"
+        "sqmk/phpunit-extensions": "dev-master"
     },
+    "repositories": [
+        {
+            "type": "package",
+            "package": {
+                "name": "jquery/jquery",
+                "version": "1.11.0",
+                "dist": {
+                    "url": "http://code.jquery.com/jquery-1.11.0.js",
+                    "type": "file"
+                }
+            }
+        }
+    ],
     "scripts": {
         "post-install-cmd": [
-            "Incenteev\\ParameterHandler\\ScriptHandler::buildParameters",
             "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::buildBootstrap",
             "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::clearCache",
             "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installAssets",
             "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installRequirementsFile"
         ],
         "post-update-cmd": [
-            "Incenteev\\ParameterHandler\\ScriptHandler::buildParameters",
             "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::buildBootstrap",
             "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::clearCache",
             "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installAssets",

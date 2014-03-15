@@ -1,0 +1,39 @@
+fos_rest:
+    view:
+        view_response_listener: force
+        force_redirects:
+          json: true
+          xml: true
+        formats:
+            json: true
+            xml: true
+            html: false
+            rss: false
+        templating_formats:
+            html: false
+        mime_types:
+            json: ['application/json', 'application/x-json', 'application/vnd.example-com.foo+json']
+            xml: ['application/xhtml+xml','application/xml']
+            jpg: 'image/jpeg'
+            png: 'image/png'
+    body_listener: false
+    param_fetcher_listener: force
+    allowed_methods_listener: true
+    access_denied_listener:
+        json: true
+    format_listener:
+        default_priorities:
+            - json
+            - xml
+            - '*/*'
+        fallback_format: json
+        prefer_extension: true
+    routing_loader: ~
+    exception:
+        codes:
+            'Symfony\Component\Routing\Exception\ResourceNotFoundException': 404
+        messages:
+            'Symfony\Component\Routing\Exception\ResourceNotFoundException': true
+    body_converter:
+            enabled: false
+            validate: false
