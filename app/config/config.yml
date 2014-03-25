@@ -21,7 +21,7 @@ framework:
     session:
         # handler_id set to null will use default session handler from php.ini
         handler_id:  ~
-        name: %cookie_prefix%_TRADIMOSESSID
+        name: %cookie_prefix%_OPMSESSID
         cookie_lifetime: 0
         cookie_domain: %base_url%
         cookie_httponly: true

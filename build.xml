@@ -97,7 +97,7 @@
 
     <!-- Info -->
     <target name="_info" hidden="true">
-        <echo level="warning" message="Building project tradimo in ${environment} environment." />
+        <echo level="warning" message="Building project opm-server in ${environment} environment." />
         <echo message="" />
 
         <if>

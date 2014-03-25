@@ -17,3 +17,4 @@ app/AppKernel.php
 app/AppKernelApi.php
 bin/
 composer.lock
+config/*
