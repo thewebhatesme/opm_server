@@ -19,7 +19,7 @@ default:
                     CURLOPT_SSL_VERIFYHOST: false
                 ssl.certificate_authority: false
           base_url: http://server.opm.local/app_test.php/
-          files_path: /Users/mikelohmann/Sites/opm_server
+          files_path: /home/vagrant/src/opm_server
 opm-server:
   extensions:
         Behat\Symfony2Extension\Extension:

@@ -11,5 +11,16 @@ namespace Phm\Component\HttpMetrics;
 
 class HttpMetricFactory implements HttpMetricFactoryInterface
 {
+    /**
+     * @var array
+     */
+    private $availableHttpMetrics = array();
 
+    /**
+     * {@inheritDoc}
+     */
+    public function createMetric($name = 'count2xx')
+    {
+        // TODO: Implement createMetric() method.
+    }
 }

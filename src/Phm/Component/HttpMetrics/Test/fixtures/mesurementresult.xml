@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testresult
+    xmlns="http://www.thewebhatesme.de/2014/schema/testresult">
+    <client>
+        <version>1.0.1</version>
+        <start>2005-08-15T15:52:01+00:00</start>
+        <duration>37</duration>
+    </client>
+    <measurement>
+    <metrics>
+        <metric name="statuscode2xx">
+            <count>10</count>
+        </metric>
+        <metric name="statuscode3xx">
+            <count>5</count>
+        </metric>
+        <metric name="statuscode4xx">
+            <count>4</count>
+        </metric>
+        <metric name="statuscode5xx">
+            <count>2</count>
+        </metric>
+    </metrics>
+    <rawData>
+        <![CDATA[
+
+        ]]>
+    </rawData>
+    </measurement>
+</testresult>

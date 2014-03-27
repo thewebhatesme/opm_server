@@ -1,0 +1,23 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <parameters>
+        <parameter key="phm.opmserver.metrics.httpmetricfactory.class">\Phm\Component\HttpMetrics\HttpMetricFactory</parameter>
+        <parameter key="httpmetrics" type="collection">
+            <parameter key="statuscode2xx">Phm\Component\HttpMetrics\HttpStatusCodeMetric</parameter>
+            <parameter key="statuscode3xx">Phm\Component\HttpMetrics\HttpStatusCodeMetric</parameter>
+            <parameter key="statuscode4xx">Phm\Component\HttpMetrics\HttpStatusCodeMetric</parameter>
+            <parameter key="statuscode5xx">Phm\Component\HttpMetrics\HttpStatusCodeMetric</parameter>
+        </parameter>
+    </parameters>
+
+    <services>
+        <service id="phm.opmserver.metrics.httpmetricfactory"
+                 class="%phm.opmserver.metrics.httpmetricfactory.class%">
+            <argument type="collection" id="%httpmetrics%"/>
+        </service>
+     </services>
+</container>

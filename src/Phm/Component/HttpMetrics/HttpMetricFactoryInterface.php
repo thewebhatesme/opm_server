@@ -10,5 +10,5 @@ namespace Phm\Component\HttpMetrics;
 
 interface HttpMetricFactoryInterface
 {
-
+    public function createMetric($name = 'count2xx');
 }
