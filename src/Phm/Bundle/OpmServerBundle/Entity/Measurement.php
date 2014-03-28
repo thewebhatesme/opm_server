@@ -13,6 +13,18 @@ use Doctrine\ORM\Mapping as ORM;
 class Measurement
 {
     /**
+     *
+     * @const string
+     */
+    const XMLNODENAME = 'measurement';
+
+    /**
+     *
+     * @const string
+     */
+    const METRICSXMLNODENAME = 'metrics';
+
+    /**
      * @var integer
      *
      * @ORM\Column(name="id", type="integer")
@@ -46,7 +58,7 @@ class Measurement
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -69,7 +81,7 @@ class Measurement
     /**
      * Get metrics
      *
-     * @return \stdClass 
+     * @return \stdClass
      */
     public function getMetrics()
     {
@@ -92,7 +104,7 @@ class Measurement
     /**
      * Get rawData
      *
-     * @return string 
+     * @return string
      */
     public function getRawData()
     {
@@ -115,7 +127,7 @@ class Measurement
     /**
      * Get created
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getCreated()
     {

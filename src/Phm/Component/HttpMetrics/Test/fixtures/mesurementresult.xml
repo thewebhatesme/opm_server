@@ -8,16 +8,16 @@
     </client>
     <measurement>
     <metrics>
-        <metric name="statuscode2xx">
+        <metric class="http" name="statuscode2xx">
             <count>10</count>
         </metric>
-        <metric name="statuscode3xx">
+        <metric class="http" name="statuscode3xx">
             <count>5</count>
         </metric>
-        <metric name="statuscode4xx">
+        <metric class="http" name="statuscode4xx">
             <count>4</count>
         </metric>
-        <metric name="statuscode5xx">
+        <metric class="http" name="statuscode5xx">
             <count>2</count>
         </metric>
     </metrics>

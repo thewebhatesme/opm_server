@@ -5,6 +5,7 @@
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <parameters>
+        <parameter key="phm.opmserver.metrics.metricfactoryfactory.class">\Phm\Component\Metrics\MetricFactoryFactory</parameter>
         <parameter key="phm.opmserver.metrics.httpmetricfactory.class">\Phm\Component\HttpMetrics\HttpMetricFactory</parameter>
         <parameter key="httpmetrics" type="collection">
             <parameter key="statuscode2xx">Phm\Component\HttpMetrics\HttpStatusCodeMetric</parameter>
@@ -15,9 +16,14 @@
     </parameters>
 
     <services>
+        <service id="phm.opmserver.metrics.metricfactoryfactory"
+                 class="%phm.opmserver.metrics.metricfactoryfactory.class%">
+        </service>
+
         <service id="phm.opmserver.metrics.httpmetricfactory"
                  class="%phm.opmserver.metrics.httpmetricfactory.class%">
             <argument type="collection" id="%httpmetrics%"/>
+            <tag name="opmserver.metricfactory" />
         </service>
      </services>
 </container>

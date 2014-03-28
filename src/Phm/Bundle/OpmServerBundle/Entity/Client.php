@@ -12,6 +12,12 @@ use Doctrine\ORM\Mapping as ORM;
 class Client
 {
     /**
+     *
+     * @const string
+     */
+    const XMLNODENAME = 'client';
+
+    /**
      * @var integer
      *
      * @ORM\Column(name="id", type="integer")
