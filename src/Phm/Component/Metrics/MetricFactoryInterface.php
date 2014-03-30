@@ -17,4 +17,20 @@ interface MetricFactoryInterface
      * @return string
      */
     public function getName();
+
+    /**
+     * creates metric of a given name
+     *
+     * @param string $name
+     *
+     * @return MetricInterface
+     */
+    public function createMetric($name);
+
+    /**
+     * @param string $name
+     *
+     * @return Boolean
+     */
+    public function hasMetric($name);
 }

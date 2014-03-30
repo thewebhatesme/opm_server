@@ -34,9 +34,9 @@ class Measurement
     private $id;
 
     /**
-     * @var \stdClass
+     * @var array
      *
-     * @ORM\Column(name="metrics", type="object")
+     * @ORM\Column(name="metrics", type="array")
      */
     private $metrics;
 
@@ -68,10 +68,23 @@ class Measurement
     /**
      * Set metrics
      *
-     * @param \stdClass $metrics
+     * @param array $metrics
      * @return Measurement
      */
-    public function setMetrics($metrics)
+    public function addMetric(MetricInterface $metric)
+    {
+        $this->metrics[$metric->getName()] = $metric;
+
+        return $this;
+    }
+
+    /**
+     * Set metrics
+     *
+     * @param array $metrics
+     * @return Measurement
+     */
+    public function setMetrics(array $metrics)
     {
         $this->metrics = $metrics;
 

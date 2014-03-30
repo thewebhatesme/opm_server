@@ -9,6 +9,22 @@
 namespace Phm\Component\Metrics;
 
 
+use Phm\Component\Metrics\Exceptions\HttpMetricFactoryNotAvailableException;
+
 interface MetricFactoryFactoryInterface
 {
+    /**
+     * @param string $name
+     *
+     * @return MetricFactoryInterface
+     * @throws HttpMetricFactoryNotAvailableException
+     */
+    public function createMetricFactory($name);
+
+    /**
+     * @param string $name
+     *
+     * @return boolean
+     */
+    public function hasMetricFactory($name);
 }

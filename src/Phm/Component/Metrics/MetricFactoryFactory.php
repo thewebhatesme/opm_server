@@ -18,7 +18,15 @@ class MetricFactoryFactory implements MetricFactoryFactoryInterface
      */
     private $availableMetricFactories = array();
 
-    public function __construct($availableMetricFactories)
+    /**
+     * @var array
+     */
+    private $createdMetricFactories = array();
+
+    /**
+     * @param array $availableMetricFactories
+     */
+    public function __construct(array $availableMetricFactories = array())
     {
         $this->availableMetricFactories = $availableMetricFactories;
     }
@@ -32,7 +40,11 @@ class MetricFactoryFactory implements MetricFactoryFactoryInterface
             throw new HttpMetricFactoryNotAvailableException('The metric factory: ' . $name . ' does not exist.');
         }
 
-        return new $this->availableMetricFactories[$name];
+        if (!isset($this->createdMetricFactories[$name])) {
+            $this->createdMetricFactories[$name] = new $this->availableMetricFactories[$name];
+        }
+
+        return $this->createdMetricFactories[$name];
     }
 
     /**

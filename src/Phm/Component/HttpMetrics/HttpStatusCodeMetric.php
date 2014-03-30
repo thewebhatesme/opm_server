@@ -29,4 +29,35 @@ class HttpStatusCodeMetric implements HttpMetricInterface, HttpStatusCodeMetricI
     {
         return $this->count;
     }
-}
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setData($data)
+    {
+        // TODO: Implement setData() method.
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getName()
+    {
+        return 'httpstatuscodemetric';
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function serialize()
+    {
+        // TODO: Implement serialize() method.
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function unserialize($serialized)
+    {
+        // TODO: Implement unserialize() method.
+}}

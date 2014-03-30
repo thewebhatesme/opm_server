@@ -26,6 +26,14 @@ class HttpMetricFactory implements HttpMetricFactoryInterface, MetricFactoryInte
      */
     private $availableHttpMetrics = array();
 
+    /**
+     * @var array
+     */
+    private $createdHttpMetrics = array();
+
+    /**
+     * @param array $availableHttpMetrics
+     */
     public function __construct($availableHttpMetrics)
     {
         $this->availableHttpMetrics = $availableHttpMetrics;
@@ -48,7 +56,11 @@ class HttpMetricFactory implements HttpMetricFactoryInterface, MetricFactoryInte
             throw new HttpMetricNotAvailableException('The metric: ' . $name . ' does not exist.');
         }
 
-        return new $this->availableHttpMetrics[$name];
+        if (!isset($this->createdHttpMetrics[$name])) {
+            $this->createdHttpMetrics[$name] = new $this->availableHttpMetrics[$name];
+        }
+
+        return $this->createdHttpMetrics[$name];
     }
 
     /**
