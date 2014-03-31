@@ -12,10 +12,25 @@ use Doctrine\ORM\Mapping as ORM;
 class Client
 {
     /**
-     *
      * @const string
      */
     const XMLNODENAME = 'client';
+
+    /**
+     * @const string
+     */
+    const XMLDURATIONNODENAME = 'duration';
+
+    /**
+     * @const string
+     */
+    const XMLVERSIONNODENAME = 'verstion';
+
+    /**
+     * @const string
+     */
+    const XMLSTARTNODENAME = 'start';
+
 
     /**
      * @var integer

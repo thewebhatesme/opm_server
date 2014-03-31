@@ -70,10 +70,8 @@ class ClientApiController extends FOSRestController
     /**
      * @return View
      */
-    public function postClientdataAction($clientUuid, $data)
+    public function postClientMeasurementsAction($clientUuid, $data)
     {
-        $data = array();
-
         $client = new Client();
         $measurement = new Measurement();
 
@@ -83,10 +81,10 @@ class ClientApiController extends FOSRestController
         $clientData = $this->domCrawler
           ->filter(Client::XMLNODENAME);
 
-        $client->setClientId();
-        $client->setDuration();
-        $client->setVersion();
-        $client->setLastactivity();
+        $client->setClientId($clientUuid);
+        $client->setDuration($clientData->filter(Client::XMLDURATIONNODENAME)->text());
+        $client->setVersion($clientData->filter(Client::XMLVERSIONNODENAME)->text());
+        $client->setLastactivity($clientData->filter(Client::XMLSTARTNODENAME)->text());
 
 
         $metricsToLoad = $this->domCrawler
@@ -118,7 +116,7 @@ class ClientApiController extends FOSRestController
     /**
      * @return View
      */
-    public function getClientdataAction()
+    public function getClientMeasurementAction($id)
     {
         $data = array('testget' => 'hurray');
         return $this->view($data, 200);
