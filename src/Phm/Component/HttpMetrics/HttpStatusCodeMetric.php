@@ -7,27 +7,26 @@
 namespace Phm\Component\HttpMetrics;
 
 
+use Symfony\Component\DomCrawler\Crawler;
+
 class HttpStatusCodeMetric implements HttpMetricInterface, HttpStatusCodeMetricInterface
 {
     /**
-     * @var int
+     * @const string
      */
-    private $count;
+    const NAME = 'httpstatuscodemetric';
 
     /**
-     * {@inheritDoc}
+     * @var Crawler
      */
-    public function setCount($count)
-    {
-        $this->count = $count;
-    }
+    private $data;
 
     /**
      * {@inheritDoc}
      */
     public function getCount()
     {
-        return $this->count;
+        return (int) $this->data->filter(self::COUNTXMLNODENAME)->text();
     }
 
     /**
@@ -35,7 +34,7 @@ class HttpStatusCodeMetric implements HttpMetricInterface, HttpStatusCodeMetricI
      */
     public function setData($data)
     {
-        // TODO: Implement setData() method.
+        $this->data = $data;
     }
 
     /**
@@ -43,7 +42,7 @@ class HttpStatusCodeMetric implements HttpMetricInterface, HttpStatusCodeMetricI
      */
     public function getName()
     {
-        return 'httpstatuscodemetric';
+        return self::NAME;
     }
 
     /**
@@ -51,7 +50,7 @@ class HttpStatusCodeMetric implements HttpMetricInterface, HttpStatusCodeMetricI
      */
     public function serialize()
     {
-        // TODO: Implement serialize() method.
+        return serialize($this->data);
     }
 
     /**
@@ -59,5 +58,6 @@ class HttpStatusCodeMetric implements HttpMetricInterface, HttpStatusCodeMetricI
      */
     public function unserialize($serialized)
     {
-        // TODO: Implement unserialize() method.
-}}
+        $this->data = unserialize($serialized);
+    }
+}

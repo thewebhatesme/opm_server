@@ -59,7 +59,7 @@ class ClientApiController extends FOSRestController
     public function __construct(
       EntityManager $em,
       Crawler $domCrawler,
-      HttpMetricFactoryFactoryInterface $metricFactoryFactory
+      MetricFactoryFactoryInterface $metricFactoryFactory
     )
     {
         $this->em = $em;
@@ -74,8 +74,6 @@ class ClientApiController extends FOSRestController
     {
         $client = new Client();
         $measurement = new Measurement();
-
-
         $this->domCrawler->addXmlContent($data);
 
         $clientData = $this->domCrawler
@@ -97,8 +95,7 @@ class ClientApiController extends FOSRestController
                 $metricFactory = $this->metricFactoryFactory->createMetricFactory($metricToLoad->attr['type']);
                 $metric = $metricFactory->createMetric($metricToLoad->attr['name']);
 
-                // @todo: this has to become Crawler instances to have possibility to use child nodes in metric nodes
-                $metric->setData(array($metricToLoad->text()));
+                $metric->setData(array($metricToLoad->children()));
 
                 $measurement->addMetric($metric);
             } else {
@@ -107,18 +104,28 @@ class ClientApiController extends FOSRestController
             }
         }
 
+        // @todo: better errorhandling here...
+        $this->em->getConnection()->beginTransaction();
+        try {
+            $this->em->persist($client);
+            $this->em->persist($measurement);
+            $this->em->flush();
+            $this->em->getConnection()->commit();
+        } catch (\Exception $e) {
+            $this->em->getConnection()->rollback();
+            throw $e;
+        }
 
-
-        $data = array('testpost' => 'hurray');
+        $data = array();
         return $this->view($data, 200);
     }
 
     /**
      * @return View
      */
-    public function getClientMeasurementAction($id)
+    public function getClientMeasurementAction($clientUuid)
     {
-        $data = array('testget' => 'hurray');
+        $data = array();
         return $this->view($data, 200);
     }
 }

@@ -11,9 +11,9 @@ namespace Phm\Component\HttpMetrics;
 interface HttpMetricInterface
 {
     /**
-     * @param int $count
+     * @const string
      */
-    public function setCount($count);
+    const COUNTXMLNODENAME = 'count';
 
     /**
      * @return int
