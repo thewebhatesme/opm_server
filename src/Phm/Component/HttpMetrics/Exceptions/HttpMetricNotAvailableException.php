@@ -2,10 +2,10 @@
 /**
  * Declares the HttpMetricNotAvailableException class.
  *
- * @author     Mike Lohmann <mike.lohmann@deck36.de>
+ * @author     Mike Lohmann <mike.lohmann@phmlabs.de>
  */
 
 namespace Phm\Component\HttpMetrics\Exceptions;
 
 
-class HttpMetricNotAvailableException extends \Exception{}
+class HttpMetricNotAvailableException extends MetricException {}

@@ -3,6 +3,8 @@
 namespace Phm\Bundle\OpmServerBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Phm\Component\Metrics\MetricInterface;
+use Phm\Component\Storage\Items\MeasurementItemInterface;
 
 /**
  * Measurement
@@ -10,7 +12,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table()
  * @ORM\Entity
  */
-class Measurement
+class Measurement implements MeasurementItemInterface
 {
     /**
      *

@@ -2,14 +2,14 @@
 /**
  * Declares the MetricFactoryFactory class.
  *
- * @author     Mike Lohmann <mike.lohmann@deck36.de>
+ * @author     Mike Lohmann <mike.lohmann@phmlabs.de>
  * @copyright  Copyright (c) 2014 DECK36 GmbH & Co. KG (http://www.deck36.de)
  */
 
 namespace Phm\Component\Metrics;
 
 
-use Phm\Component\Metrics\Exceptions\HttpMetricFactoryNotAvailableException;
+use Phm\Component\Metrics\Exceptions\MetricFactoryNotAvailableException;
 
 class MetricFactoryFactory implements MetricFactoryFactoryInterface
 {
@@ -37,7 +37,7 @@ class MetricFactoryFactory implements MetricFactoryFactoryInterface
     public function createMetricFactory($name)
     {
         if (!$this->hasMetricFactory((string) $name)) {
-            throw new HttpMetricFactoryNotAvailableException('The metric factory: ' . $name . ' does not exist.');
+            throw new MetricFactoryNotAvailableException('The metric factory: ' . $name . ' does not exist.');
         }
 
         if (!isset($this->createdMetricFactories[$name])) {

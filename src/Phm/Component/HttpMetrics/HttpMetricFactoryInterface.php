@@ -2,7 +2,7 @@
 /**
  * Declares the HttpMetricFactoryInterface class.
  *
- * @author     Mike Lohmann <mike.lohmann@deck36.de>
+ * @author     Mike Lohmann <mike.lohmann@phmlabs.de>
  */
 
 namespace Phm\Component\HttpMetrics;

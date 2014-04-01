@@ -3,13 +3,14 @@
 namespace Phm\Bundle\OpmServerBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Phm\Component\Storage\Items\ClientItemInterface;
 
 /**
  * Client
  *
  * @ORM\Table()
  */
-class Client
+class Client implements ClientItemInterface
 {
     /**
      * @const string

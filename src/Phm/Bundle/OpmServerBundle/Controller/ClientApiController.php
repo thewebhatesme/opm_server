@@ -16,6 +16,7 @@ use FOS\RestBundle\Controller\Annotations\QueryParam;
 use FOS\RestBundle\Controller\Annotations\RouteResource;
 use FOS\RestBundle\Controller\FOSRestController;
 use MongoDate;
+use Phm\Component\Storage\StorageStrategyInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -44,9 +45,9 @@ class ClientApiController extends FOSRestController
     private $domCrawler;
 
     /**
-     * @var EntityManager
+     * @var StorageStrategyInterface
      */
-    private $em;
+    private $storageStrategy;
 
     /**
      * @var MetricFactoryFactoryInterface
@@ -57,12 +58,12 @@ class ClientApiController extends FOSRestController
      * Constructor
      */
     public function __construct(
-      EntityManager $em,
+      StorageStrategyInterface $storageStrategy,
       Crawler $domCrawler,
       MetricFactoryFactoryInterface $metricFactoryFactory
     )
     {
-        $this->em = $em;
+        $this->storageStrategy = $storageStrategy;
         $this->domCrawler = $domCrawler;
         $this->metricFactoryFactory = $metricFactoryFactory;
     }
@@ -72,8 +73,9 @@ class ClientApiController extends FOSRestController
      */
     public function postClientMeasurementsAction($clientUuid, $data)
     {
-        $client = new Client();
-        $measurement = new Measurement();
+        $client = $this->storageStrategy->createClientItem();
+        $measurement = $this->storageStrategy->createMeasurementItem();
+
         $this->domCrawler->addXmlContent($data);
 
         $clientData = $this->domCrawler
@@ -102,18 +104,6 @@ class ClientApiController extends FOSRestController
                 // @todo: Add some logging here.
                 continue;
             }
-        }
-
-        // @todo: better errorhandling here...
-        $this->em->getConnection()->beginTransaction();
-        try {
-            $this->em->persist($client);
-            $this->em->persist($measurement);
-            $this->em->flush();
-            $this->em->getConnection()->commit();
-        } catch (\Exception $e) {
-            $this->em->getConnection()->rollback();
-            throw $e;
         }
 
         $data = array();
