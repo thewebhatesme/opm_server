@@ -13,6 +13,8 @@ use Doctrine\ORM\EntityManager;
 use Phm\Component\Storage\Exceptions\StorageStrategyException;
 use Phm\Component\Storage\Items\ClientItemInterface;
 use Phm\Component\Storage\Items\MeasurementItemInterface;
+use Phm\Component\Storage\Items\StorageItemInterface;
+
 
 class MysqlItemStorageStrategy implements StorageStrategyInterface {
 
@@ -27,9 +29,10 @@ class MysqlItemStorageStrategy implements StorageStrategyInterface {
     private $em;
 
     /**
-     * @param array $items
+     * @param EntityManager $em
+     * @param array         $items
      */
-    public function __construct(array $items = array(), EntityManager $em)
+    public function __construct(EntityManager $em, array $items = array())
     {
         $this->registeredItems = $items;
         $this->em = $em;
@@ -87,5 +90,13 @@ class MysqlItemStorageStrategy implements StorageStrategyInterface {
             $this->em->getConnection()->rollback();
             throw new StorageStrategyException($e->getMessage(), $e->getCode(), $e);
         }
+    }
+
+    /**
+     * @param StorageItemInterface $item
+     */
+    public function addItem(StorageItemInterface $item)
+    {
+        $this->registeredItems[$item->getName()] = $item;
     }
 }

@@ -35,4 +35,11 @@ interface StorageStrategyInterface extends ClientItemStorageStrategyInterface,
      * @throws StorageStrategyException
      */
     public function storeItems(array $items);
+
+    /**
+     * @param StorageItemInterface $item
+     *
+     * @return void
+     */
+    public function addItem(StorageItemInterface $item);
 }

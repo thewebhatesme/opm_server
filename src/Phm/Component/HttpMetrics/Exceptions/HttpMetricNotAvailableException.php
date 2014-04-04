@@ -8,4 +8,6 @@
 namespace Phm\Component\HttpMetrics\Exceptions;
 
 
+use Phm\Component\Metrics\Exceptions\MetricException;
+
 class HttpMetricNotAvailableException extends MetricException {}

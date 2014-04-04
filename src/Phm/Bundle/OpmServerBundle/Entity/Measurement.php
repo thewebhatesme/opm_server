@@ -70,7 +70,9 @@ class Measurement implements MeasurementItemInterface
     /**
      * Set metrics
      *
-     * @param array $metrics
+     * @param MetricInterface $metric
+     *
+     * @internal param array $metrics
      * @return Measurement
      */
     public function addMetric(MetricInterface $metric)
@@ -147,5 +149,13 @@ class Measurement implements MeasurementItemInterface
     public function getCreated()
     {
         return $this->created;
+    }
+
+    /**
+     * @return string
+     */
+    public function getName()
+    {
+        return self::NAME;
     }
 }

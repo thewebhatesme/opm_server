@@ -15,7 +15,8 @@ use FOS\RestBundle\Controller\Annotations\Get;
 use FOS\RestBundle\Controller\Annotations\QueryParam;
 use FOS\RestBundle\Controller\Annotations\RouteResource;
 use FOS\RestBundle\Controller\FOSRestController;
-use MongoDate;
+
+use Phm\Component\Metrics\MetricInterface;
 use Phm\Component\Storage\StorageStrategyInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
@@ -33,7 +34,7 @@ use Phm\Component\Metrics\MetricFactoryFactoryInterface;
 /**
  * Class ClientApiController
  * @Route(service="phm.opmserver.controller.clientapi")
- * @RouteResource("Clientdata")
+ * RouteResource("Clientdata")
  *
  */
 class ClientApiController extends FOSRestController
@@ -59,63 +60,63 @@ class ClientApiController extends FOSRestController
      */
     public function __construct(
       StorageStrategyInterface $storageStrategy,
-      Crawler $domCrawler,
       MetricFactoryFactoryInterface $metricFactoryFactory
     )
     {
         $this->storageStrategy = $storageStrategy;
-        $this->domCrawler = $domCrawler;
         $this->metricFactoryFactory = $metricFactoryFactory;
+        $this->domCrawler = new Crawler();
     }
 
     /**
+     * @Post("/clients/{clientUuid}/measurement", name="post_userdatas_file",
+     *      requirements={"clientUuid" = "\d+"})
+     *
      * @return View
      */
-    public function postClientMeasurementsAction($clientUuid, $data)
+    public function postClientMeasurementAction($clientUuid, Request $request)
     {
+        $data = $request->getContent();
+
         $client = $this->storageStrategy->createClientItem();
         $measurement = $this->storageStrategy->createMeasurementItem();
 
         $this->domCrawler->addXmlContent($data);
 
         $clientData = $this->domCrawler
-          ->filter(Client::XMLNODENAME);
+          ->filterXpath('//testresult/' . Client::XMLNODENAME);
 
         $client->setClientId($clientUuid);
-        $client->setDuration($clientData->filter(Client::XMLDURATIONNODENAME)->text());
-        $client->setVersion($clientData->filter(Client::XMLVERSIONNODENAME)->text());
-        $client->setLastactivity($clientData->filter(Client::XMLSTARTNODENAME)->text());
-
+        $client->setDuration($clientData->filterXpath('//' . Client::XMLDURATIONNODENAME)->text());
+        $client->setVersion($clientData->filterXpath('//' .Client::XMLVERSIONNODENAME)->text());
+        $client->setLastactivity(new \DateTime($clientData->filterXpath('//' .Client::XMLSTARTNODENAME)->text()));
 
         $metricsToLoad = $this->domCrawler
-          ->filter(Measurement::XMLNODENAME)
-          ->filter(Measurement::METRICSXMLNODENAME);
+          ->filterXpath('//testresult/' . Measurement::XMLNODENAME . '/' . Measurement::METRICSXMLNODENAME);
 
-        /** @var Crawler $metricToLoad */
-        foreach ($metricsToLoad as $metricToLoad) {
-            if ($this->metricFactoryFactory->hasMetricFactory($metricToLoad->attr['type'])) {
-                $metricFactory = $this->metricFactoryFactory->createMetricFactory($metricToLoad->attr['type']);
-                $metric = $metricFactory->createMetric($metricToLoad->attr['name']);
-
-                $metric->setData(array($metricToLoad->children()));
-
+        /** @var \DomElement $metricToLoad */
+        foreach ($metricsToLoad->children() as $metricToLoad) {
+            $factoryType = $metricToLoad->attributes->getNamedItem(MetricInterface::TYPEXMLNODEATTRIBUTE)->nodeValue;
+            $metricName = $metricToLoad->attributes->getNamedItem(MetricInterface::NAMEXMLNODEATTRIBUTE)->nodeValue;
+            if ($this->metricFactoryFactory->hasMetricFactory($factoryType)) {
+                $metricFactory = $this->metricFactoryFactory->createMetricFactory($factoryType);
+                $metric = $metricFactory->createMetric($metricName);
+                $metric->setData($metricToLoad->children());
                 $measurement->addMetric($metric);
             } else {
                 // @todo: Add some logging here.
                 continue;
             }
         }
-
-        $data = array();
-        return $this->view($data, 200);
+        return $this->view(null, 400);
     }
 
     /**
      * @return View
      */
-    public function getClientMeasurementAction($clientUuid)
+    public function getClientMeasurementsAction($clientUuid)
     {
-        $data = array();
+        $data = array('Ok');
         return $this->view($data, 200);
     }
 }

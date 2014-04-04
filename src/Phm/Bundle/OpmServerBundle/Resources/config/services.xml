@@ -4,17 +4,20 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
-    <!--
+
     <parameters>
-        <parameter key="phm_opm_server.example.class">Phm\Bundle\OpmServerBundle\Example</parameter>
+        <parameter key="phm.component.storage.mysql_item_storage_strategy.class">Phm\Component\Storage\MysqlItemStorageStrategy</parameter>
+        <parameter key="storageitems" type="collection">
+            <parameter key="client">Phm\Bundle\OpmServerBundle\Entity\Client</parameter>
+            <parameter key="measurement">Phm\Bundle\OpmServerBundle\Entity\Measurement</parameter>
+        </parameter>
     </parameters>
 
     <services>
-        <service id="phm_opm_server.example" class="%phm_opm_server.example.class%">
-            <argument type="service" id="service_id" />
-            <argument>plain_value</argument>
-            <argument>%parameter_name%</argument>
+        <service id="phm.component.storage.mysql_item_storage_strategy"
+                 class="%phm.component.storage.mysql_item_storage_strategy.class%">
+            <argument type="service" id="doctrine.orm.default_entity_manager"/>
+            <argument>%storageitems%</argument>
         </service>
     </services>
-    -->
 </container>

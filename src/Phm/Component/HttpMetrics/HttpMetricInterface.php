@@ -9,7 +9,7 @@ namespace Phm\Component\HttpMetrics;
 
 use Phm\Component\Metrics\MetricInterface;
 
-interface HttpStatusCodeMetricInterface extends MetricInterface
+interface HttpMetricInterface extends MetricInterface
 {
 
 }

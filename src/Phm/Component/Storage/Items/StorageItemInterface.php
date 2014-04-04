@@ -10,5 +10,8 @@ namespace Phm\Component\Storage\Items;
 
 
 interface StorageItemInterface {
-
+    /**
+     * @return string
+     */
+    public function getName();
 }

@@ -8,7 +8,7 @@
 namespace Phm\Component\HttpMetrics;
 
 
-interface HttpMetricInterface
+interface HttpStatusCodeMetricInterface
 {
     /**
      * @const string

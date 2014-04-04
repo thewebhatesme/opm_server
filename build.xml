@@ -116,7 +116,11 @@
     <target name="configure" hidden="true" description="Main target for all config relevant other targets.">
         <delete dir="${path.base}/app/cache" quiet="true" includeemptydirs="true" />
         <mkdir dir="${path.base}/app/cache" />
+        <mkdir dir="${path.base}/app/cache/api" />
         <mkdir dir="${config.path.logs}" />
+        <chmod file="${path.base}/app/cache/api" mode="0777" />
+        <chmod file="${path.base}/app/cache" mode="0777" />
+        <chmod file="${config.path.logs}" mode="0777" />
 
         <if>
             <not>

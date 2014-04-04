@@ -1,5 +1,5 @@
 phm_opmserver_client_api:
     resource: "Phm\Bundle\OpmServerBundle\Controller\ClientApiController"
-    type: rest
-    name_prefix: client_api
+    type: annotation
+    prefix: api
 

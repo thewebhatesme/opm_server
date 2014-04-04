@@ -11,6 +11,16 @@ namespace Phm\Component\Metrics;
 interface MetricInterface extends \Serializable
 {
     /**
+     * @const string
+     */
+    const NAMEXMLNODEATTRIBUTE = "name";
+
+    /**
+     * @const string
+     */
+    const TYPEXMLNODEATTRIBUTE = "class";
+
+    /**
      * @param $data
      *
      * @return mixed

@@ -25,7 +25,7 @@ class Client implements ClientItemInterface
     /**
      * @const string
      */
-    const XMLVERSIONNODENAME = 'verstion';
+    const XMLVERSIONNODENAME = 'version';
 
     /**
      * @const string
@@ -43,7 +43,7 @@ class Client implements ClientItemInterface
     private $id;
 
     /**
-     * @var guid
+     * @var string
      *
      * @ORM\Column(name="clientId", type="guid")
      */
@@ -95,6 +95,8 @@ class Client implements ClientItemInterface
 
     /**
      * @param String $version
+     *
+     * @return void
      */
     public function setVersion($version)
     {
@@ -122,8 +124,8 @@ class Client implements ClientItemInterface
     /**
      * Set clientId
      *
-     * @param guid $clientId
-     * @return Clients
+     * @param string $clientId
+     * @return Client
      */
     public function setClientId($clientId)
     {
@@ -135,7 +137,7 @@ class Client implements ClientItemInterface
     /**
      * Get clientId
      *
-     * @return guid
+     * @return string
      */
     public function getClientId()
     {
@@ -146,7 +148,7 @@ class Client implements ClientItemInterface
      * Set created
      *
      * @param \DateTime $created
-     * @return Clients
+     * @return Client
      */
     public function setCreated($created)
     {
@@ -169,9 +171,9 @@ class Client implements ClientItemInterface
      * Set lastactivity
      *
      * @param \DateTime $lastactivity
-     * @return Clients
+     * @return Client
      */
-    public function setLastactivity($lastactivity)
+    public function setLastactivity(\DateTime $lastactivity)
     {
         $this->lastactivity = $lastactivity;
 
@@ -186,5 +188,13 @@ class Client implements ClientItemInterface
     public function getLastactivity()
     {
         return $this->lastactivity;
+    }
+
+    /**
+     * @return string
+     */
+    public function getName()
+    {
+        return self::NAME;
     }
 }
