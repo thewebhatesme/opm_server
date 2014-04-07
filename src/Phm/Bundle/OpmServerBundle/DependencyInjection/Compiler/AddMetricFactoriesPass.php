@@ -17,17 +17,13 @@ class AddMetricFactoriesPass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
-        if (!$container->hasDefinition('opmserver.metricfactory')) {
+        if (false == $container->hasDefinition('phm.opmserver.metrics.metricfactoryfactory')) {
             return;
         }
+        $definition = $container->getDefinition('phm.opmserver.metrics.metricfactoryfactory');
 
-        $factories = array();
         foreach ($container->findTaggedServiceIds('opmserver.metricfactory') as $id => $attributes) {
-            $factories[] = new Reference($id);
+            $definition->addMethodCall('addMetricFactory', array(new Reference($id)));
         }
-
-        $container
-          ->getDefinition('phm.opmserver.metrics.metricfactoryfactory')
-          ->replaceArgument(0, $factories);
     }
 }

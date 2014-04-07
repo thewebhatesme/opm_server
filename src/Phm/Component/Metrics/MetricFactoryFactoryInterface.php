@@ -13,6 +13,14 @@ use Phm\Component\Metrics\Exceptions\MetricFactoryNotAvailableException;
 
 interface MetricFactoryFactoryInterface
 {
+
+    /**
+     * @param MetricFactoryInterface $metricFactory
+     *
+     * @return void
+     */
+    public function addMetricFactory(MetricFactoryInterface $metricFactory);
+
     /**
      * @param string $name
      *

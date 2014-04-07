@@ -96,19 +96,25 @@ class ClientApiController extends FOSRestController
 
         /** @var \DomElement $metricToLoad */
         foreach ($metricsToLoad->children() as $metricToLoad) {
+            // @todo: milo-04072014: the whole block need more defensive programming and error handling
             $factoryType = $metricToLoad->attributes->getNamedItem(MetricInterface::TYPEXMLNODEATTRIBUTE)->nodeValue;
             $metricName = $metricToLoad->attributes->getNamedItem(MetricInterface::NAMEXMLNODEATTRIBUTE)->nodeValue;
             if ($this->metricFactoryFactory->hasMetricFactory($factoryType)) {
                 $metricFactory = $this->metricFactoryFactory->createMetricFactory($factoryType);
                 $metric = $metricFactory->createMetric($metricName);
-                $metric->setData($metricToLoad->children());
+                $metric->setData($metricToLoad->childNodes);
                 $measurement->addMetric($metric);
             } else {
                 // @todo: Add some logging here.
                 continue;
             }
         }
-        return $this->view(null, 400);
+
+
+
+        // Maybe a 201 with location header heading to the created data or an xml document containing that information
+        // HTTP No Content
+        return $this->view(null, 204);
     }
 
     /**

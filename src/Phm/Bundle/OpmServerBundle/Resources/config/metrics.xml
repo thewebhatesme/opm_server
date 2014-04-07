@@ -6,7 +6,7 @@
 
     <parameters>
         <parameter key="phm.opmserver.metrics.metricfactoryfactory.class">Phm\Component\Metrics\MetricFactoryFactory</parameter>
-        <parameter key="phm.opmserver.metrics.httpmetricfactory.class">Phm\Component\HttpMetrics</parameter>
+        <parameter key="phm.opmserver.metrics.httpmetricfactory.class">Phm\Component\HttpMetrics\HttpMetricFactory</parameter>
         <parameter key="httpmetrics" type="collection">
             <parameter key="statuscode2xx">Phm\Component\HttpMetrics\HttpStatusCodeMetric</parameter>
             <parameter key="statuscode3xx">Phm\Component\HttpMetrics\HttpStatusCodeMetric</parameter>
