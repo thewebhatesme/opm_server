@@ -264,13 +264,43 @@
         <if>
             <isset property="enable.content.overwrite" />
             <then>
-                <property name="yes-overwrite" value="-y" />
+                <property name="yes-overwrite" value="y" />
             </then>
             <else>
-                <property name="yes-overwrite" value="" />
+                <property name="yes-overwrite" value="n" />
             </else>
         </if>
 
+        <if>
+            <equals arg1="${yes-overwrite}" arg2="y" />
+            <then>
+               <phingcall target="-dropDatabase" />
+               <phingcall target="-createDatabase" />
+               <phingcall target="updateDatabaseSchema" />
+            </then>
+            <else>
+                <echo message="Dont start to create database."/>
+            </else>
+        </if>
+
+    </target>
+
+    <target name="dropDatabase">
+        <echo message="Dropping database based on configuration for ${environment} environment."/>
+        <exec command="app/console doctrine:database:drop --force"
+              checkreturn="false" passthru="true"/>
+    </target>
+
+    <target name="createDatabase">
+        <echo message="Creating database based on configuration for ${environment} environment."/>
+        <exec command="app/console doctrine:database:create"
+              checkreturn="false" passthru="true"/>
+    </target>
+
+    <target name="updateDatabaseSchema">
+        <echo message="Updating database schema based on configuration for ${environment} environment."/>
+        <exec command="app/console doctrine:schema:update --force"
+              checkreturn="false" passthru="true"/>
     </target>
 
     <target name="copyAppKernelTemplateWithReplacingPlaceholders"

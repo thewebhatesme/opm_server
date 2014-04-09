@@ -91,9 +91,10 @@ class ClientApiController extends FOSRestController
         $client->setVersion($clientData->filterXpath('//' .Client::XMLVERSIONNODENAME)->text());
         $client->setLastactivity(new \DateTime($clientData->filterXpath('//' .Client::XMLSTARTNODENAME)->text()));
 
+        $measurement->setClientUuid($clientUuid);
+
         $metricsToLoad = $this->domCrawler
           ->filterXpath('//testresult/' . Measurement::XMLNODENAME . '/' . Measurement::METRICSXMLNODENAME);
-
         /** @var \DomElement $metricToLoad */
         foreach ($metricsToLoad->children() as $metricToLoad) {
             // @todo: milo-04072014: the whole block need more defensive programming and error handling
@@ -110,6 +111,10 @@ class ClientApiController extends FOSRestController
             }
         }
 
+        $measurement->setClient($client);
+        //$client->setMeasurement($measurement);
+
+        $this->storageStrategy->storeItems(array($measurement));
 
 
         // Maybe a 201 with location header heading to the created data or an xml document containing that information

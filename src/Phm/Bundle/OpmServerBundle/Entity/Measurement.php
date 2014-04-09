@@ -4,13 +4,15 @@ namespace Phm\Bundle\OpmServerBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Phm\Component\Metrics\MetricInterface;
+use Phm\Component\Storage\Items\ClientItemInterface;
 use Phm\Component\Storage\Items\MeasurementItemInterface;
 
 /**
  * Measurement
  *
- * @ORM\Table()
+ * @ORM\Table(name="measurements")
  * @ORM\Entity
+ * @ORM\HasLifecycleCallbacks
  */
 class Measurement implements MeasurementItemInterface
 {
@@ -45,7 +47,7 @@ class Measurement implements MeasurementItemInterface
     /**
      * @var string
      *
-     * @ORM\Column(name="rawData", type="blob")
+     * @ORM\Column(name="rawData", type="blob", nullable=true)
      */
     private $rawData;
 
@@ -56,11 +58,20 @@ class Measurement implements MeasurementItemInterface
      */
     private $created;
 
+    /**
+     * @ORM\OneToOne(targetEntity="Client", mappedBy="measurement", cascade={"all"}, fetch="LAZY")
+     */
+    protected $client;
 
     /**
-     * Get id
+     * @var string
      *
-     * @return integer
+     * @ORM\Column(name="client_uuid", type="guid")
+     */
+    private $client_uuid;
+
+    /**
+     * {@inheritDoc}
      */
     public function getId()
     {
@@ -68,25 +79,50 @@ class Measurement implements MeasurementItemInterface
     }
 
     /**
-     * Set metrics
-     *
-     * @param MetricInterface $metric
-     *
-     * @internal param array $metrics
-     * @return Measurement
+     * {@inheritDoc}
+     */
+    public function setClientUuid($clientUuid)
+    {
+        $this->client_uuid = $clientUuid;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getClientUuid()
+    {
+        return $this->client_uuid;
+    }
+
+    /**
+     * {@inheritDoc}
      */
     public function addMetric(MetricInterface $metric)
     {
-        $this->metrics[$metric->getName()] = $metric;
+        $this->metrics[$metric->getName()][] = $metric;
 
         return $this;
     }
 
     /**
-     * Set metrics
-     *
-     * @param array $metrics
-     * @return Measurement
+     * {@inheritDoc}
+     */
+    public function setClient(ClientItemInterface $client)
+    {
+        $client->setMeasurement($this);
+        $this->client = $client;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getClient()
+    {
+        return $this->client;
+    }
+
+    /**
+     * {@inheritDoc}
      */
     public function setMetrics(array $metrics)
     {
@@ -96,9 +132,7 @@ class Measurement implements MeasurementItemInterface
     }
 
     /**
-     * Get metrics
-     *
-     * @return \stdClass
+     * {@inheritDoc}
      */
     public function getMetrics()
     {
@@ -106,10 +140,7 @@ class Measurement implements MeasurementItemInterface
     }
 
     /**
-     * Set rawData
-     *
-     * @param string $rawData
-     * @return Measurement
+     * {@inheritDoc}
      */
     public function setRawData($rawData)
     {
@@ -119,9 +150,7 @@ class Measurement implements MeasurementItemInterface
     }
 
     /**
-     * Get rawData
-     *
-     * @return string
+     * {@inheritDoc}
      */
     public function getRawData()
     {
@@ -129,10 +158,7 @@ class Measurement implements MeasurementItemInterface
     }
 
     /**
-     * Set created
-     *
-     * @param \DateTime $created
-     * @return Measurement
+     * {@inheritDoc}
      */
     public function setCreated($created)
     {
@@ -142,9 +168,7 @@ class Measurement implements MeasurementItemInterface
     }
 
     /**
-     * Get created
-     *
-     * @return \DateTime
+     * {@inheritDoc}
      */
     public function getCreated()
     {
@@ -152,10 +176,18 @@ class Measurement implements MeasurementItemInterface
     }
 
     /**
-     * @return string
+     * {@inheritDoc}
      */
     public function getName()
     {
         return self::NAME;
+    }
+
+    /**
+     *  @ORM\PrePersist
+     */
+    public function prePersistCallback()
+    {
+        $this->created = new \DateTime('now');
     }
 }

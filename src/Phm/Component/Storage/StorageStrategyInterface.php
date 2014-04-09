@@ -42,4 +42,5 @@ interface StorageStrategyInterface extends ClientItemStorageStrategyInterface,
      * @return void
      */
     public function addItem(StorageItemInterface $item);
+
 }

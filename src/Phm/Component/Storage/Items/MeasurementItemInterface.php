@@ -18,6 +18,16 @@ interface MeasurementItemInterface extends StorageItemInterface {
     const NAME = 'measurement';
 
     /**
+     * @param int $clientId
+     */
+    public function setClientUuid($clientId);
+
+    /**
+     * @return int
+     */
+    public function getClientUuid();
+
+    /**
      * Set metrics
      *
      * @param array $metrics
@@ -69,4 +79,14 @@ interface MeasurementItemInterface extends StorageItemInterface {
      * @return \DateTime
      */
     public function getCreated();
+
+    /**
+     * @param mixed $client
+     */
+    public function setClient(ClientItemInterface $client);
+
+    /**
+     * @return mixed
+     */
+    public function getClient();
 }

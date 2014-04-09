@@ -4,11 +4,12 @@ namespace Phm\Bundle\OpmServerBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Phm\Component\Storage\Items\ClientItemInterface;
+use Phm\Component\Storage\Items\MeasurementItemInterface;
 
 /**
- * Client
- *
- * @ORM\Table()
+ * @ORM\Table(name="clients")
+ * @ORM\Entity
+ * @ORM\HasLifecycleCallbacks
  */
 class Client implements ClientItemInterface
 {
@@ -45,9 +46,9 @@ class Client implements ClientItemInterface
     /**
      * @var string
      *
-     * @ORM\Column(name="clientId", type="guid")
+     * @ORM\Column(name="client_uuid", type="guid")
      */
-    private $clientId;
+    private $client_uuid;
 
     /**
      * @var \DateTime
@@ -66,19 +67,50 @@ class Client implements ClientItemInterface
     /**
      * @var \Int
      *
-     * @ORM\Column(name="duration", type="int")
+     * @ORM\Column(name="duration", type="integer")
      */
     private $duration;
 
     /**
      * @var \String
      *
-     * @ORM\Column(name="version", type="string")
+     * @ORM\Column(name="version", type="string", length=10)
      */
     private $version;
 
     /**
-     * @param Int $duration
+     * ORM\OneToOne(targetEntity="Measurement", mappedBy="client",cascade={"all"})
+     * @ORM\OneToOne(targetEntity="Measurement", inversedBy="client", cascade={"all"})
+     * @ORM\JoinColumn(name="measurement_id", referencedColumnName="id")
+     */
+    protected $measurement;
+
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->measurements = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setClientUuid($client_uuid)
+    {
+        $this->client_uuid = $client_uuid;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getClientUuid()
+    {
+        return $this->client_uuid;
+    }
+
+    /**
+     * {@inheritDoc}
      */
     public function setDuration($duration)
     {
@@ -86,7 +118,7 @@ class Client implements ClientItemInterface
     }
 
     /**
-     * @return Int
+     * {@inheritDoc}
      */
     public function getDuration()
     {
@@ -94,9 +126,7 @@ class Client implements ClientItemInterface
     }
 
     /**
-     * @param String $version
-     *
-     * @return void
+     * {@inheritDoc}
      */
     public function setVersion($version)
     {
@@ -104,7 +134,23 @@ class Client implements ClientItemInterface
     }
 
     /**
-     * @return String
+     * {@inheritDoc}
+     */
+    public function setMeasurement(MeasurementItemInterface $measurement)
+    {
+        $this->measurement = $measurement;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getMeasurement()
+    {
+        return $this->measurement;
+    }
+
+    /**
+     * {@inheritDoc}
      */
     public function getVersion()
     {
@@ -112,9 +158,7 @@ class Client implements ClientItemInterface
     }
 
     /**
-     * Get id
-     *
-     * @return integer
+     * {@inheritDoc}
      */
     public function getId()
     {
@@ -122,33 +166,25 @@ class Client implements ClientItemInterface
     }
 
     /**
-     * Set clientId
-     *
-     * @param string $clientId
-     * @return Client
+     * {@inheritDoc}
      */
     public function setClientId($clientId)
     {
-        $this->clientId = $clientId;
+        $this->client_uuid = $clientId;
 
         return $this;
     }
 
     /**
-     * Get clientId
-     *
-     * @return string
+     * {@inheritDoc}
      */
     public function getClientId()
     {
-        return $this->clientId;
+        return $this->client_uuid;
     }
 
     /**
-     * Set created
-     *
-     * @param \DateTime $created
-     * @return Client
+     * {@inheritDoc}
      */
     public function setCreated($created)
     {
@@ -158,9 +194,7 @@ class Client implements ClientItemInterface
     }
 
     /**
-     * Get created
-     *
-     * @return \DateTime
+     * {@inheritDoc}
      */
     public function getCreated()
     {
@@ -168,10 +202,7 @@ class Client implements ClientItemInterface
     }
 
     /**
-     * Set lastactivity
-     *
-     * @param \DateTime $lastactivity
-     * @return Client
+     * {@inheritDoc}
      */
     public function setLastactivity(\DateTime $lastactivity)
     {
@@ -181,9 +212,7 @@ class Client implements ClientItemInterface
     }
 
     /**
-     * Get lastactivity
-     *
-     * @return \DateTime
+     * {@inheritDoc}
      */
     public function getLastactivity()
     {
@@ -191,10 +220,18 @@ class Client implements ClientItemInterface
     }
 
     /**
-     * @return string
+     * {@inheritDoc}
      */
     public function getName()
     {
         return self::NAME;
+    }
+
+    /**
+     *  @ORM\PrePersist
+     */
+    public function prePersistCallback()
+    {
+        $this->created = new \DateTime('now');
     }
 }

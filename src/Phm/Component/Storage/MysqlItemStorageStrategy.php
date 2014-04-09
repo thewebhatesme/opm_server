@@ -93,7 +93,7 @@ class MysqlItemStorageStrategy implements StorageStrategyInterface {
     }
 
     /**
-     * @param StorageItemInterface $item
+     * {@inheritDoc}
      */
     public function addItem(StorageItemInterface $item)
     {

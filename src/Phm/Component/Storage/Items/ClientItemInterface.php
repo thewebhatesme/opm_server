@@ -38,14 +38,7 @@ interface ClientItemInterface extends StorageItemInterface {
     public function getVersion();
 
     /**
-     * Get id
-     *
-     * @return integer
-     */
-    public function getId();
-
-    /**
-     * Set clientId
+     * Set client_uuid
      *
      * @param guid $clientId
      * @return ClientItemInterface
@@ -53,7 +46,7 @@ interface ClientItemInterface extends StorageItemInterface {
     public function setClientId($clientId);
 
     /**
-     * Get clientId
+     * Get client_uuid
      *
      * @return guid
      */
@@ -88,4 +81,24 @@ interface ClientItemInterface extends StorageItemInterface {
      * @return \DateTime
      */
     public function getLastactivity();
+
+    /**
+     * @param MeasurementItemInterface $measurement
+     */
+    public function setMeasurement(MeasurementItemInterface $measurement);
+
+    /**
+     * @return MeasurementItemInterface
+     */
+    public function getMeasurement();
+
+    /**
+     * @param string $client_uuid
+     */
+    public function setClientUuid($client_uuid);
+
+    /**
+     * @return string
+     */
+    public function getClientUuid();
 }
