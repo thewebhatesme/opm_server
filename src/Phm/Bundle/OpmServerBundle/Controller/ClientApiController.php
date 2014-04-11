@@ -18,6 +18,8 @@ use FOS\RestBundle\Controller\FOSRestController;
 
 use Phm\Component\Metrics\MetricInterface;
 use Phm\Component\Storage\StorageStrategyInterface;
+use Phm\Component\Validator\ValidationResultInterface;
+use Phm\Component\Validator\XmlValidationResult;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -76,30 +78,37 @@ class ClientApiController extends FOSRestController
      */
     public function postClientMeasurementAction($clientUuid, Request $request)
     {
-        $data = $request->getContent();
+        $xmlDocument = new \DOMDocument();
+        $xmlDocument->loadXML($request->getContent());
 
+        $validationResult = $this->isValid($xmlDocument);
+        if ($validationResult->hasErrors()) {
+            // HTTP Status Code 422 = Unprocessable Entity
+            return $this->view($validationResult->toString(), 422);
+        }
+
+        $this->domCrawler->addDocument($xmlDocument);
         $client = $this->storageStrategy->createClientItem();
-        $measurement = $this->storageStrategy->createMeasurementItem();
+        $client->setClientId($clientUuid);
 
-        $this->domCrawler->addXmlContent($data);
+        $measurement = $this->storageStrategy->createMeasurementItem();
+        $measurement->setClientUuid($clientUuid);
+        $measurement->setClient($client);
 
         $clientData = $this->domCrawler
           ->filterXpath('//testresult/' . Client::XMLNODENAME);
-
-        $client->setClientId($clientUuid);
         $client->setDuration($clientData->filterXpath('//' . Client::XMLDURATIONNODENAME)->text());
         $client->setVersion($clientData->filterXpath('//' .Client::XMLVERSIONNODENAME)->text());
         $client->setLastactivity(new \DateTime($clientData->filterXpath('//' .Client::XMLSTARTNODENAME)->text()));
-
-        $measurement->setClientUuid($clientUuid);
 
         $metricsToLoad = $this->domCrawler
           ->filterXpath('//testresult/' . Measurement::XMLNODENAME . '/' . Measurement::METRICSXMLNODENAME);
         /** @var \DomElement $metricToLoad */
         foreach ($metricsToLoad->children() as $metricToLoad) {
-            // @todo: milo-04072014: the whole block need more defensive programming and error handling
+            // @todo: milo-04072014: the whole block needs more defensive programming and error handling
             $factoryType = $metricToLoad->attributes->getNamedItem(MetricInterface::TYPEXMLNODEATTRIBUTE)->nodeValue;
             $metricName = $metricToLoad->attributes->getNamedItem(MetricInterface::NAMEXMLNODEATTRIBUTE)->nodeValue;
+
             if ($this->metricFactoryFactory->hasMetricFactory($factoryType)) {
                 $metricFactory = $this->metricFactoryFactory->createMetricFactory($factoryType);
                 $metric = $metricFactory->createMetric($metricName);
@@ -111,11 +120,7 @@ class ClientApiController extends FOSRestController
             }
         }
 
-        $measurement->setClient($client);
-        //$client->setMeasurement($measurement);
-
         $this->storageStrategy->storeItems(array($measurement));
-
 
         // Maybe a 201 with location header heading to the created data or an xml document containing that information
         // HTTP No Content
@@ -129,5 +134,23 @@ class ClientApiController extends FOSRestController
     {
         $data = array('Ok');
         return $this->view($data, 200);
+    }
+
+    /**
+     * @todo: milo-04102014-move to validator and let the validator collect all schemas and merge them into one file
+     *
+     * @param \DomDocument $domDocument
+     *
+     * @return ValidationResultInterface
+     */
+    private function isValid(\DomDocument $domDocument)
+    {
+        $result = new XmlValidationResult();
+        if (false === $isValid = $domDocument->schemaValidate(__DIR__ . '/../../../Component/schema/opmserver-1.0.xsd')
+        ) {
+            $result->setErrors(libxml_get_errors());
+        }
+
+        return $result;
     }
 }

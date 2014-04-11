@@ -2,7 +2,7 @@
 /**
  * Declares the HttpStatusCodeMetric class.
  *
- * @author  Mike Lohmann <mike.lohmann@deck36.de>
+ * @author  Mike Lohmann <mike.lohmann@phplabs.de>
  */
 namespace Phm\Component\HttpMetrics;
 
