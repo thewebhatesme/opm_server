@@ -1,0 +1,5 @@
+imports:
+    - { resource: ../parameters.yml }
+
+parameters:
+    twig.exception_listener.controller: Symfony\Bundle\TwigBundle\Controller\ExceptionController

@@ -28,6 +28,11 @@ class MysqlItemStorageStrategy implements StorageStrategyInterface {
     private $em;
 
     /**
+     * @var Validator
+     */
+    private $validator;
+
+    /**
      * @param EntityManager $em
      * @param array         $items
      */
@@ -78,6 +83,10 @@ class MysqlItemStorageStrategy implements StorageStrategyInterface {
      */
     public function storeItems(array $items)
     {
+        if ($this->validator->isValid($items)) {
+
+        }
+
         $this->em->getConnection()->beginTransaction();
         try {
             foreach( $items as $item ) {

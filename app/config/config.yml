@@ -82,3 +82,16 @@ sensio_framework_extra:
     request: { converters: false }
     view:    { annotations: true }
     cache:   { annotations: false }
+
+fos_user:
+    db_driver: orm # other valid values are 'mongodb', 'couchdb' and 'propel'
+    firewall_name: main
+    user_class: Phm\OpmServerBundle\Entity\User
+
+services:
+    opm.facebook.user:
+        class: Phm\OpmServerBundle\Security\User\Provider\FacebookProvider
+        arguments:
+            facebook: "@fos_facebook.api"
+            userManager: "@fos_user.user_manager"
+            validator: "@validator"

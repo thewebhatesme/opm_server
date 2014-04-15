@@ -1,6 +1,6 @@
 imports:
-    - { resource: ../parameters.yml }
-    - { resource: ../security.yml }
+    - { resource: parameters.yml }
+    #- { resource: ../security.yml }
     - { resource: fos_rest.yml }
 
 
@@ -14,7 +14,7 @@ framework:
     csrf_protection: false
     validation:      { enable_annotations: true }
     templating:
-        engines: ['twig']
+        engines: ["php"]
         #assets_version: SomeVersionScheme
     default_locale:  "%locale%"
     trusted_hosts:   ~
@@ -31,11 +31,6 @@ framework:
     http_method_override: true
     profiler:
       enabled: false
-
-# Twig Configuration
-twig:
-    debug:            "%kernel.debug%"
-    strict_variables: "%kernel.debug%"
 
 # Doctrine Configuration
 doctrine:

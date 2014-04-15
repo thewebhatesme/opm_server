@@ -128,12 +128,30 @@ class ClientApiController extends FOSRestController
     }
 
     /**
+     * @Get("/clients/{clientUuid}/measurements", name="get_client_measurements",
+     *      requirements={"clientUuid" = "\d+"})
+     *
      * @return View
      */
     public function getClientMeasurementsAction($clientUuid)
     {
         $data = array('Ok');
         return $this->view($data, 200);
+    }
+
+    /**
+     * Create a client for an Ip or IP-
+     *
+     * @Get("/clients/create", name="get_clients_uuid")
+     *
+     * @return View
+     */
+    public function generateClientUuidAction()
+    {
+        // $client = $this->storageStrategy->createClientItem();
+        $uuid = sprintf('%04X%04X-%04X-%04X-%04X-%04X%04X%04X', mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(16384, 20479), mt_rand(32768, 49151), mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(0, 65535));
+        // $client->setClientUuid($uuid);
+        return $this->view($uuid, 200);
     }
 
     /**

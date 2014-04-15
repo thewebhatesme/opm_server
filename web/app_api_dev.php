@@ -1,13 +1,11 @@
 <?php
-
-use Symfony\Component\ClassLoader\XcacheClassLoader;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Debug\Debug;
-
 // Because of the big csv files we need to increase certain php.ini settings. Otherwise the profiler might explode
 ini_set('memory_limit', '1024M');
 ini_set('max_execution_time', '300');
 ini_set('max_input_time', '300');
+
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Debug\Debug;
 
 $loader = require_once __DIR__.'/../app/bootstrap.php.cache';
 Debug::enable();
