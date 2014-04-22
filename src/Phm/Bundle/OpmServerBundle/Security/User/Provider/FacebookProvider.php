@@ -5,7 +5,7 @@
  * @author     Mike Lohmann <mike.lohmann@phmlabs.de>
  */
 
-namespace Acme\UserBundle\Security\User\Provider;
+namespace Phm\Bundle\OpmServerBundle\Security\User\Provider;
 
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;

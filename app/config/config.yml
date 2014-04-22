@@ -86,11 +86,18 @@ sensio_framework_extra:
 fos_user:
     db_driver: orm # other valid values are 'mongodb', 'couchdb' and 'propel'
     firewall_name: main
-    user_class: Phm\OpmServerBundle\Entity\User
+    user_class: Phm\Bundle\OpmServerBundle\Entity\User
+
+fos_facebook:
+    alias:  facebook
+    app_id: 123456879
+    secret: s3cr3t
+    cookie: true
+    permissions: [email, user_birthday, user_location]
 
 services:
     opm.facebook.user:
-        class: Phm\OpmServerBundle\Security\User\Provider\FacebookProvider
+        class: Phm\Bundle\OpmServerBundle\Security\User\Provider\FacebookProvider
         arguments:
             facebook: "@fos_facebook.api"
             userManager: "@fos_user.user_manager"
